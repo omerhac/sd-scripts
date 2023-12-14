@@ -4465,7 +4465,7 @@ def sample_images_common(
     unet,
     prompt_replacement=None,
     controlnet=None,
-    upload_images=False
+    upload_images=True
 ):
     """
     StableDiffusionLongPromptWeightingPipelineの改造版を使うようにしたので、clip skipおよびプロンプトの重みづけに対応した
