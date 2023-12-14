@@ -4674,7 +4674,7 @@ def sample_images_common(
 
             image = pipeline.latents_to_image(latents)[0]
 
-            img_filename = 'final.jpg' if final_image else f'{steps}_{i}.png'
+            img_filename = 'final.png' if final_image else f'{steps}_{i}.png'
 
             image_path = os.path.join(save_dir, img_filename)
             image.save(image_path)
@@ -4690,7 +4690,7 @@ def sample_images_common(
                     api_secret = os.getenv("CLOUDINARY_API_SECRET")
                 )
                 user_id = os.getenv("USER_ID")
-                public_id = f'generated_images/demo/{user_id}/{img_filename}'
+                public_id = f"generated_images/demo/{user_id}/{img_filename.replace('.png', '')}"
                 cloudinary.uploader.unsigned_upload(image_path, upload_preset='wjgzik8l', public_id=public_id)
                 print(f'uploaded image {public_id}')
 
