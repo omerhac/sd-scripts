@@ -4465,6 +4465,7 @@ def sample_images_common(
     unet,
     prompt_replacement=None,
     controlnet=None,
+    upload_images=False
 ):
     """
     StableDiffusionLongPromptWeightingPipelineの改造版を使うようにしたので、clip skipおよびプロンプトの重みづけに対応した
@@ -4675,11 +4676,23 @@ def sample_images_common(
             ts_str = time.strftime("%Y%m%d%H%M%S", time.localtime())
             num_suffix = f"e{epoch:06d}" if epoch is not None else f"{steps:06d}"
             seed_suffix = "" if seed is None else f"_{seed}"
-            img_filename = (
-                f"{'' if args.output_name is None else args.output_name + '_'}{ts_str}_{num_suffix}_{i:02d}{seed_suffix}.png"
-            )
+            img_filename = f'{steps}_{i}.png'
 
-            image.save(os.path.join(save_dir, img_filename))
+            image_path = os.path.join(save_dir, img_filename)
+            image.save(image_path)
+            
+            if upload_images:
+                import cloudinary
+                import cloudinary.uploader
+
+                # Upload the image to Cloudinary
+                cloudinary.config( 
+                    cloud_name = "dxgcobmaz", 
+                    api_key = "978456997225717", 
+                    api_secret = os.getenv("CLOUDINARY_API_SECRET")
+                )
+                user_id = os.getenv("USER_ID")
+                cloudinary.uploader.unsigned_upload(f'./{i}.jpg', upload_preset='wjgzik8l', public_id=f'generated_images/demo/{user_id}/{i}.jpg')
 
             # wandb有効時のみログを送信
             try:
