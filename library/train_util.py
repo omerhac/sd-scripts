@@ -4692,7 +4692,7 @@ def sample_images_common(
                     api_secret = os.getenv("CLOUDINARY_API_SECRET")
                 )
                 user_id = os.getenv("USER_ID")
-                cloudinary.uploader.unsigned_upload(f'./{i}.jpg', upload_preset='wjgzik8l', public_id=f'generated_images/demo/{user_id}/{i}.jpg')
+                cloudinary.uploader.unsigned_upload(image_path, upload_preset='wjgzik8l', public_id=f'generated_images/demo/{user_id}/{i}.png')
 
             # wandb有効時のみログを送信
             try:
