@@ -4465,7 +4465,8 @@ def sample_images_common(
     unet,
     prompt_replacement=None,
     controlnet=None,
-    upload_images=True
+    upload_images=True,
+    final_image=False
 ):
     """
     StableDiffusionLongPromptWeightingPipelineの改造版を使うようにしたので、clip skipおよびプロンプトの重みづけに対応した
@@ -4477,7 +4478,7 @@ def sample_images_common(
         if epoch is None or epoch % args.sample_every_n_epochs != 0:
             return
     else:
-        if steps % args.sample_every_n_steps != 0 or epoch is not None:  # steps is not divisible or end of epoch
+        if not final_image and (steps % args.sample_every_n_steps != 0 or epoch is not None):  # steps is not divisible or end of epoch
             return
 
     print(f"\ngenerating sample images at step / サンプル画像生成 ステップ: {steps}")
@@ -4673,10 +4674,7 @@ def sample_images_common(
 
             image = pipeline.latents_to_image(latents)[0]
 
-            ts_str = time.strftime("%Y%m%d%H%M%S", time.localtime())
-            num_suffix = f"e{epoch:06d}" if epoch is not None else f"{steps:06d}"
-            seed_suffix = "" if seed is None else f"_{seed}"
-            img_filename = f'{steps}_{i}.png'
+            img_filename = 'final.jpg' if final_image else f'{steps}_{i}.png'
 
             image_path = os.path.join(save_dir, img_filename)
             image.save(image_path)
