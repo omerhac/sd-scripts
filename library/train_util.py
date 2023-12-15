@@ -4673,39 +4673,39 @@ def sample_images_common(
                     num_images_per_prompt=3
                 )
 
-            image = pipeline.latents_to_image(latents)[0]
+            for img_idx, image in enumerate(pipeline.latents_to_image(latents)):
 
-            img_filename = 'final.png' if final_image else f'{steps}_{i}.png'
+                img_filename = f'final_{img_idx}.png' if final_image else f'{steps}_{img_idx}.png'
 
-            image_path = os.path.join(save_dir, img_filename)
-            image.save(image_path)
-            
-            if upload_images:
-                import cloudinary
-                import cloudinary.uploader
+                image_path = os.path.join(save_dir, img_filename)
+                image.save(image_path)
+                
+                if upload_images:
+                    import cloudinary
+                    import cloudinary.uploader
 
-                # Upload the image to Cloudinary
-                cloudinary.config( 
-                    cloud_name = "dxgcobmaz", 
-                    api_key = "978456997225717", 
-                    api_secret = os.getenv("CLOUDINARY_API_SECRET")
-                )
-                user_id = os.getenv("USER_ID")
-                public_id = f"generated_images/demo/{user_id}/{img_filename.replace('.png', '')}"
-                cloudinary.uploader.unsigned_upload(image_path, upload_preset='wjgzik8l', public_id=public_id)
-                print(f'uploaded image {public_id}')
+                    # Upload the image to Cloudinary
+                    cloudinary.config( 
+                        cloud_name = "dxgcobmaz", 
+                        api_key = "978456997225717", 
+                        api_secret = os.getenv("CLOUDINARY_API_SECRET")
+                    )
+                    user_id = os.getenv("USER_ID")
+                    public_id = f"generated_images/demo/{user_id}/{img_filename.replace('.png', '')}"
+                    cloudinary.uploader.unsigned_upload(image_path, upload_preset='wjgzik8l', public_id=public_id)
+                    print(f'uploaded image {public_id}')
 
-            # wandb有効時のみログを送信
-            try:
-                wandb_tracker = accelerator.get_tracker("wandb")
+                # wandb有効時のみログを送信
                 try:
-                    import wandb
-                except ImportError:  # 事前に一度確認するのでここはエラー出ないはず
-                    raise ImportError("No wandb / wandb がインストールされていないようです")
+                    wandb_tracker = accelerator.get_tracker("wandb")
+                    try:
+                        import wandb
+                    except ImportError:  # 事前に一度確認するのでここはエラー出ないはず
+                        raise ImportError("No wandb / wandb がインストールされていないようです")
 
-                wandb_tracker.log({f"sample_{i}": wandb.Image(image)})
-            except:  # wandb 無効時
-                pass
+                    wandb_tracker.log({f"sample_{i}": wandb.Image(image)})
+                except:  # wandb 無効時
+                    pass
 
     # clear pipeline and cache to reduce vram usage
     del pipeline
