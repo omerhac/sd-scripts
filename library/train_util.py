@@ -4662,7 +4662,7 @@ def sample_images_common(
             print(f"scale: {scale}")
             with accelerator.autocast():
                 latents = pipeline(
-                    prompt=prompt,
+                    prompt=[prompt. prompt, prompt],
                     height=height,
                     width=width,
                     num_inference_steps=sample_steps,
@@ -4670,7 +4670,6 @@ def sample_images_common(
                     negative_prompt=negative_prompt,
                     controlnet=controlnet,
                     controlnet_image=controlnet_image,
-                    num_images_per_prompt=3
                 )
 
             for img_idx, image in enumerate(pipeline.latents_to_image(latents)):
