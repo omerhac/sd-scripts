@@ -4670,6 +4670,7 @@ def sample_images_common(
                     negative_prompt=negative_prompt,
                     controlnet=controlnet,
                     controlnet_image=controlnet_image,
+                    num_images_per_prompt=3
                 )
 
             image = pipeline.latents_to_image(latents)[0]
