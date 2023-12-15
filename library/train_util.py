@@ -4661,8 +4661,8 @@ def sample_images_common(
             print(f"sample_steps: {sample_steps}")
             print(f"scale: {scale}")
             with accelerator.autocast():
-                latents = pipeline(
-                    prompt=[prompt. prompt, prompt],
+                images = pipeline(
+                    prompt=[prompt] * 3,
                     height=height,
                     width=width,
                     num_inference_steps=sample_steps,
@@ -4670,10 +4670,23 @@ def sample_images_common(
                     negative_prompt=negative_prompt,
                     controlnet=controlnet,
                     controlnet_image=controlnet_image,
-                )
+                ).images
 
-            for img_idx, image in enumerate(pipeline.latents_to_image(latents)):
+            from PIL import Image
+            def image_grid(imgs, rows, cols):
+                assert len(imgs) == rows*cols
 
+                w, h = imgs[0].size
+                grid = Image.new('RGB', size=(cols*w, rows*h))
+                grid_w, grid_h = grid.size
+                
+                for i, img in enumerate(imgs):
+                    grid.paste(img, box=(i%cols*w, i//cols*h))
+                return grid
+            
+            grid = image_grid(images, rows=1, cols=3)
+            images += grid
+            for img_idx, image in enumerate(images):
                 img_filename = f'final_{img_idx}.png' if final_image else f'{steps}_{img_idx}.png'
 
                 image_path = os.path.join(save_dir, img_filename)
