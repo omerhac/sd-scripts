@@ -4686,7 +4686,7 @@ def sample_images_common(
                 return grid
             
             grid = image_grid(images, rows=1, cols=3)
-            images += grid
+            images += [grid]
             for img_idx, image in enumerate(images):
                 img_filename = f'final_{img_idx}.png' if final_image else f'{steps}_{img_idx}.png'
 
