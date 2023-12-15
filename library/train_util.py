@@ -4661,7 +4661,7 @@ def sample_images_common(
             print(f"sample_steps: {sample_steps}")
             print(f"scale: {scale}")
             with accelerator.autocast():
-                images = pipeline(
+                latents = pipeline(
                     prompt=[prompt] * 3,
                     height=height,
                     width=width,
@@ -4670,8 +4670,9 @@ def sample_images_common(
                     negative_prompt=negative_prompt,
                     controlnet=controlnet,
                     controlnet_image=controlnet_image,
-                ).images
+                )
 
+            images = pipeline.latents_to_image(latents)
             from PIL import Image
             def image_grid(imgs, rows, cols):
                 assert len(imgs) == rows*cols
@@ -4684,7 +4685,7 @@ def sample_images_common(
                     grid.paste(img, box=(i%cols*w, i//cols*h))
                 return grid
             
-            grid = image_grid(images, rows=1, cols=3)
+            grid = image_grid(images, rows=1, cols3)
             images += grid
             for img_idx, image in enumerate(images):
                 img_filename = f'final_{img_idx}.png' if final_image else f'{steps}_{img_idx}.png'
