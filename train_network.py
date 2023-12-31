@@ -917,10 +917,6 @@ class NetworkTrainer:
             ckpt_name = train_util.get_last_ckpt_name(args, "." + args.save_model_as)
             save_model(ckpt_name, network, global_step, num_train_epochs, force_sync_upload=True)
 
-            print("Rendering final image ..")
-            self.sample_images(accelerator, args, None, global_step, accelerator.device, vae, tokenizer, text_encoder, unet, final_image=True)
-            print("model saved.")
-
 
 def setup_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
